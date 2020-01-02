@@ -1,0 +1,132 @@
+openapi: 3.0.0
+info:
+  version: 1.0.0
+  title: Express TS Starter
+  description: >-
+    Express TS Starter Kit...
+  contact: {}
+tags:
+  - name: Examples
+    description: APIs for Examples
+  - name: Specification
+    description: The swagger API specification
+
+paths:
+  /api/examples/{id}:
+    get:
+      tags:
+        - Examples
+      security:
+        - ApiKeyAuth: []
+      description: Returns all examples
+      parameters:
+        - in: path
+          name: id
+          description: Example ID
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Returns example
+
+  /api/examples:
+    get:
+      tags:
+        - Examples
+      security:
+        - ApiKeyAuth: []
+      description: Returns all examples
+      parameters:
+        - $ref: "#/components/parameters/page"
+        - $ref: "#/components/parameters/limit"
+        - $ref: "#/components/parameters/sortBy"
+        - $ref: "#/components/parameters/sortType"
+        - $ref: "#/components/parameters/searchFromDate"
+        - $ref: "#/components/parameters/searchToDate"
+      responses:
+        "200":
+          description: Returns example
+
+    post:
+      tags:
+        - Examples
+      security:
+        - ApiKeyAuth: []
+      description: Creates new Example and returns created Example
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                data:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+      responses:
+        "201":
+          description: Examples is created, returns Created Example
+
+
+  /specs:
+    get:
+      tags:
+        - Specification
+      responses:
+        "200":
+          description: Return the API specification
+
+servers:
+  - url: /
+
+components:
+  parameters:
+    page:
+      in: query
+      name: page
+      required: false
+      description: The page number of the result set.
+      schema:
+        type: integer
+        minimum: 1
+    limit:
+      in: query
+      name: size
+      required: false
+      description: The numbers of items to return.
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 50
+    searchFromDate:
+      in: query
+      name: from
+      schema:
+        type: string
+    searchToDate:
+      in: query
+      name: to
+      schema:
+        type: string
+    sortBy:
+      in: query
+      name: sortBy
+      description: Sort response by
+      schema:
+        type: string
+    sortType:
+      in: query
+      name: sortType
+      description: Sort type (asc | desc)
+      schema:
+        type: string
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: auth_token
+
+  links: {}
+  callbacks: {}
+security: []

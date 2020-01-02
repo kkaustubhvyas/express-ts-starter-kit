@@ -1,0 +1,23 @@
+{
+  "compileOnSave": true,
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "esModuleInterop": true,
+    "sourceMap": true,
+    "moduleResolution": "node",
+    "outDir": "dist",
+    "typeRoots": [
+      "./typings",
+      "node_modules/@types"
+    ],
+    "strictBindCallApply": true
+  },
+  "include": [
+    "typings.d.ts",
+    "server/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ]
+}
