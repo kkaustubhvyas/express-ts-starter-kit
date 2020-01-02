@@ -1,6 +1,6 @@
 # Express TS Starter
 
-Express TS Starter Kit.
+Express TS Starter Kit. Developed by using [*generator-express-no-stress-typescript*](https://www.npmjs.com/package/generator-express-no-stress-typescript)
 
 ## Quick Start
 
