@@ -1,29 +1,34 @@
 import { Request, Response, NextFunction } from 'express';
 import { HttpStatus } from '../utilities/http-service';
-import logger from '../utilities/logger/logger';
+import LoggerService from '../utilities/logger/logger';
+
+const getErrorLog = (error: any, request: Request) => {
+  return `URL: ${request.originalUrl} | STATUS: ${error.status} | MSG: ${error.message} | STACK: ${
+    error.stack || ''
+  }\n`;
+};
 
 // Error handler to return error in response
-export default function errorHandler(error, req: Request, response: Response, next: NextFunction) {
+export default function errorHandler() {
+  const logger = new LoggerService('Error');
+  return (error: any, req: Request, response: Response, next: NextFunction) => {
+    response.contentType('application/json');
+    if (!error) {
+      next();
+      return;
+    }
 
-  if (!error) {
-    return next()
-  }
+    const status = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
+    const { message, details, name } = error;
 
-  const status = error.status || HttpStatus.INTERNAL_SERVER_ERROR;
-  const message = error.message;
-  const stack = error.stack;
-
-  if (process.env.NODE_ENV === 'production') {
-    logger.error(getErrorLog(error, req));
-    response.statusMessage = message;
-    response.status(status).json({ message, status });
-  } else {
-    logger.error(getErrorLog(error, req));
-    response.statusMessage = message;
-    response.status(status).json({ message, stack, status, ...error });
-  }
-}
-
-const getErrorLog = (error, request: Request) => {
-  return `URL: ${request.originalUrl} | STATUS: ${error.status} | MSG: ${error.message} | STACK: ${error.stack || ''}\n`
+    if (process.env.NODE_ENV === 'production') {
+      logger.error(getErrorLog(error, req));
+      response.statusMessage = message;
+      response.status(status).json({ name, message, status, details });
+    } else {
+      logger.error(getErrorLog(error, req));
+      response.statusMessage = message;
+      response.status(status).json({ name, message, status, details, ...error });
+    }
+  };
 }

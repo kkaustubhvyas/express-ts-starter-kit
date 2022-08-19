@@ -1,12 +1,15 @@
-import { HttpException } from './http-exceptipn';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { HttpException } from './http-exception';
 import { HttpStatus } from '../http-service/http-service.constants';
+
 export class UnAuthorizedException extends HttpException {
-  constructor() {
+  name = 'Unauthorized';
+
+  constructor(message?: string, details?: any) {
     super({
       status: HttpStatus.UNAUTHORIZED,
-      message: 'Not Authorized'
-    })
-
-    this.name = 'Unauthorized';
+      message: message || 'Not Authorized',
+      details,
+    });
   }
 }

@@ -1,16 +1,16 @@
 import path from 'path';
-import express from 'express';
-import { OpenApiValidator } from 'express-openapi-validator';
-import errorHandler from './middlewares/error-handler.middleware';
+import { Application } from 'express';
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 
-export default function openapi(app, routes) {
-    const apiSpec = path.join(__dirname, 'api.yml');
-    app.use(process.env.OPENAPI_SPEC || '/specs', express.static(apiSpec));
+export default function openapi(app: Application) {
+  const root = path.normalize(`${__dirname}/../..`);
 
-    new OpenApiValidator({
-        apiSpec,
-    }).install(app);
+  // eslint-disable-next-line global-require
+  const swaggerDocument = YAML.load(`${root}/server/docs/api.yml`);
 
-    routes(app);
-    app.use(errorHandler);
+  app.use('/api-docs', swaggerUi.serve);
+  app.get('/api-docs', swaggerUi.setup(swaggerDocument));
+  app.enable('case sensitive routing');
+  app.enable('strict routing');
 }

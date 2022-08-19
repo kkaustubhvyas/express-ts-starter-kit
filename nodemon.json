@@ -1,16 +1,7 @@
 {
   "verbose": true,
-  "execMap": {
-    "ts": "ts-node"
-  },
-  "ignore": [
-    "test/**/*.ts",
-    "test/**/*.spec.ts",
-    ".git",
-    "node_modules"
-  ],
-  "watch": [
-    "server"
-  ],
-  "ext": "ts,js,json,yaml,yml"
+  "ignore": ["test/**/*.ts", "test/**/*.spec.ts", ".git", "node_modules"],
+  "watch": ["server"],
+  "ext": "ts,js,json,yaml,yml",
+  "exec": "node -r ts-node/register -r dotenv/config -r tsconfig-paths/register ./server/index.ts"
 }

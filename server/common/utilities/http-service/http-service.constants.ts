@@ -42,7 +42,7 @@ export enum HttpStatus {
   BAD_GATEWAY = 502,
   SERVICE_UNAVAILABLE = 503,
   GATEWAY_TIMEOUT = 504,
-  HTTP_VERSION_NOT_SUPPORTED = 505
+  HTTP_VERSION_NOT_SUPPORTED = 505,
 }
 
 export enum HttpRequestMethod {
@@ -52,5 +52,5 @@ export enum HttpRequestMethod {
   OPTIONS = 'OPTIONS',
   PATCH = 'PATCH',
   POST = 'POST',
-  PUT = 'PUT'
+  PUT = 'PUT',
 }

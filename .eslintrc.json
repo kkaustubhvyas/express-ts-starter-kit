@@ -1,0 +1,48 @@
+{
+  "env": { "commonjs": false, "node": true, "es6": true },
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "airbnb-base",
+    "airbnb-typescript",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "prettier"
+  ],
+  "parser": "@typescript-eslint/parser",
+  "overrides": [
+    {
+      "files": ["*.ts"],
+      "parserOptions": {
+        "project": ["./tsconfig-build.json"],
+        "noEmit": true
+      }
+    }
+  ],
+  "rules": {
+    "implicit-arrow-linebreak": "off",
+    "comma-dangle": "off",
+    "indent": "off",
+    "no-trailing-spaces": "off",
+    "dot-notation": "off",
+    "import/no-cycle": "off",
+    "class-methods-use-this": "off",
+    "no-plusplus": "off",
+    "no-case-declarations": "off",
+    "no-else-return": "off",
+    "import/prefer-default-export": "off",
+    "max-len": ["error", { "code": 120 }],
+    "no-console": ["error", { "allow": ["debug", "error"] }],
+    "@typescript-eslint/naming-convention": "off",
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_",
+        "varsIgnorePattern": "^_",
+        "caughtErrorsIgnorePattern": "^_"
+      }
+    ],
+    "react/jsx-filename-extension": "off"
+  }
+}

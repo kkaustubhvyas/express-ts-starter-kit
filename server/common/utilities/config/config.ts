@@ -1,11 +1,10 @@
-import * as dotenv from 'dotenv';
-import * as fs from 'fs';
+import * as dotenv from 'dotenv-safe';
 
 export class Configs {
   private readonly envConfig: { [key: string]: string };
 
   constructor(filePath: string) {
-    this.envConfig = dotenv.parse(fs.readFileSync(filePath));
+    this.envConfig = dotenv.config({ path: filePath }).parsed || {};
   }
 
   get(key: string): string {
@@ -13,4 +12,6 @@ export class Configs {
   }
 }
 
-export default new Configs(`${process.env.APP_STAGE || ''}.env`);
+const config = new Configs(`${process.env.APP_STAGE || ''}.env`);
+
+export default config;

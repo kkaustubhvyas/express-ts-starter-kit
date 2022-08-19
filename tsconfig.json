@@ -1,23 +1,25 @@
 {
-  "compileOnSave": true,
   "compilerOptions": {
-    "target": "es6",
-    "module": "commonjs",
+    "target": "es5",
+    "lib": ["esnext"],
+    "allowJs": true,
+    "baseUrl": "./",
+    "skipLibCheck": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "noEmit": true,
     "esModuleInterop": true,
-    "sourceMap": true,
     "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "incremental": true,
     "outDir": "dist",
-    "typeRoots": [
-      "./typings",
-      "node_modules/@types"
-    ],
-    "strictBindCallApply": true
+    "module": "commonjs",
+    "suppressImplicitAnyIndexErrors": true,
+    "suppressExcessPropertyErrors": true,
+    "useUnknownInCatchVariables": true,
+    "typeRoots": ["./typings"]
   },
-  "include": [
-    "typings.d.ts",
-    "server/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["server/**/*.ts"],
+  "exclude": ["node_modules", "**/*.specs.ts"]
 }

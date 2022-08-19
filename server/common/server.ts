@@ -1,42 +1,31 @@
-import express from 'express';
-import { Application } from 'express';
-import path from 'path';
-import bodyParser from 'body-parser';
+import express, { Application } from 'express';
 import http from 'http';
 import os from 'os';
-import cookieParser from 'cookie-parser';
-import installValidator from './openapi';
-import logger from './utilities/logger/logger';
-import { proxy } from './proxy/proxy.router';
+import openapi from './openapi';
 import { authenticate } from './middlewares/authentication.middleware';
+import { setupSecurity } from './middlewares/security.middleware';
+import setupRoutes from '../routes';
+import errorHandler from './middlewares/error-handler.middleware';
+import LoggerService from './utilities/logger/logger';
 
-const cors = require('cors');
-const helmet = require('helmet');
 const app = express();
 
 export default class ExpressServer {
-  constructor() {
-    const root = path.normalize(__dirname + '/../..');
-
-    app.set('appPath', root + 'client');
-    app.use(cors());
-    app.use(helmet());
-    app.use(cookieParser());
+  setup(): ExpressServer {
+    openapi(app);
+    setupSecurity(app);
     app.use(authenticate());
-    proxy(app);
-    app.use(bodyParser.json({ limit: process.env.REQUEST_LIMIT || '100kb' }));
-    app.use(bodyParser.urlencoded({ extended: true, limit: process.env.REQUEST_LIMIT || '100kb' }));
-    app.use('/', express.static(`${root}/public/`));
-  }
-
-  router(routes: (app: Application) => void): ExpressServer {
-    installValidator(app, routes)
-
+    setupRoutes(app);
+    app.use(errorHandler());
     return this;
   }
 
   listen(p: string | number): Application {
-    const welcome = port => () => logger.info(`up and running in ${process.env.NODE_ENV || 'development'} @: ${os.hostname()} on port: ${port}`);
+    const welcome = (port: string | number) => () => {
+      const logger = new LoggerService('APP');
+      logger.info(`up and running in ${process.env.NODE_ENV || 'development'} @: ${os.hostname()} on port: ${port}`);
+      logger.debug('* DEBUG LOGS ENABLED *');
+    };
     http.createServer(app).listen(p, welcome(p));
     return app;
   }

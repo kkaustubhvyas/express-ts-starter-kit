@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "strict": true,
+    "suppressImplicitAnyIndexErrors": false,
+    "suppressExcessPropertyErrors": false,
+    "isolatedModules": false,
+    "noEmit": false,
+    "outDir": "./dist"
+  },
+  "include": ["server/**/*.ts"],
+  "exclude": ["node_modules", "server/**/*.specs.ts"]
+}

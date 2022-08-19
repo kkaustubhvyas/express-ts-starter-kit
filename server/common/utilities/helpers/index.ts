@@ -1,17 +1,25 @@
-export const createQueryString = (searchObj = {}) => {
-  let result = '?'
+import { NextFunction, Request, Response } from 'express';
+
+export const createQueryString = (searchObj: { [key: string]: string } = {}) => {
+  let result = '?';
 
   Object.keys(searchObj).forEach(key => {
     if (searchObj[key]) {
-      result += `${key}=${searchObj[key]}&`
+      result += `${key}=${searchObj[key]}&`;
     }
-  })
-  return result.slice(0, -1)
-}
+  });
+  return result.slice(0, -1);
+};
 
-export const isRouterReached = (identifire: string) => {
-  return (req, res, next) => {
-    console.log(`Reached to ${identifire}`)
-    next()
-  }
-}
+/**
+ * For Quick Router Test
+ * @param identifier
+ * @returns
+ */
+export const dummyController = (identifier: string) => {
+  return (req: Request, res: Response, next: NextFunction) => {
+    // eslint-disable-next-line no-console
+    console.log(`Reached to ${identifier}`);
+    next();
+  };
+};

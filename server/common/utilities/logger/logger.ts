@@ -1,103 +1,59 @@
-const winston = require('winston');
-const DailyRotateFile = require('winston-daily-rotate-file');
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import winston, { Logger } from 'winston';
+import { ConsoleTransportOptions } from 'winston/lib/winston/transports';
+import moment from 'moment';
+import environments from '../../environments';
 
-const moment = require('moment');
-const fs = require('fs');
 const { format } = winston;
-let logDir = `${require.main.id}/logs`;
-
-if (!fs.existsSync(logDir)) {
-  fs.mkdirSync(logDir);
-}
 
 const consoleLogFormat = format.printf(({ level, message, label, timestamp }) => {
-  return `[${(`${(label || '').toUpperCase()}`)}] ${moment().format("YYYY-MM-DD HH:MM:SS")} [${level}]: ${message}\n`;
+  return `[${`${(label || '').toUpperCase()}`}] ${moment(timestamp).format(
+    'YYYY-MM-DD HH:MM:SS',
+  )} [${level}]: ${message}\n`;
 });
 
-const fileLogFormat = format.printf(({ level, message, label, timestamp }) => {
-  return `[${(label || '').toUpperCase()}] ${moment().format("YYYY-MM-DD HH:MM:SS")}: [${level}]: ${message}\n`;
-});
+class LoggerService {
+  private logger: Logger;
 
-let options = {
-  console: {
-    level: 'debug',
-    handleExceptions: true,
-    json: true,
-    colorize: true,
-    prettyPrint: true,
-    format: format.combine(
-      format.label({ label: 'APP' }),
-      format.timestamp(),
-      format.colorize(),
-      format.simple(),
-      consoleLogFormat
-    )
-  },
-};
+  constructor(label: string) {
+    const options: ConsoleTransportOptions = {
+      level: environments.LOG_LEVEL || 'debug',
+      handleExceptions: true,
+      format: format.combine(
+        format.label({ label }),
+        format.timestamp(),
+        format.colorize(),
+        format.simple(),
+        consoleLogFormat,
+      ),
+    };
 
-const fileTransport = {
-  filename: `${require.main.id}/logs/app-%DATE%.log`,
-  level: 'error',
-  datePattern: 'YYYY-MM-DD-HH',
-  zippedArchive: true,
-  maxSize: '20m',
-  maxFiles: '14d',
-  format: format.combine(
-    format.label({ label: 'APP' }),
-    format.timestamp(),
-    format.simple(),
-    fileLogFormat
-  ),
-};
+    this.logger = winston.createLogger({
+      level: 'error',
+      transports: [new winston.transports.Console(options)],
+      exitOnError: false,
+    });
+  }
 
-const logger = new winston.createLogger({
-  level: 'error',
-  transports: [
-    new DailyRotateFile(fileTransport),
-    new winston.transports.Console(options.console)
-  ],
-  exitOnError: false
-});
+  log(level: string, message: string, ...meta: any[]) {
+    this.logger.log(level, message, ...meta);
+  }
 
-const httpModuleOptions = {
-  console: {
-    level: 'debug',
-    handleExceptions: true,
-    json: true,
-    colorize: true,
-    prettyPrint: true,
-    format: format.combine(
-      format.label({ label: 'HTTP' }),
-      format.timestamp(),
-      format.colorize(),
-      format.simple(),
-      consoleLogFormat
-    )
-  },
-};
+  info(message: string, ...meta: any[]) {
+    this.logger.info(message, ...meta);
+  }
 
-const httpModuleFileTransport = {
-  filename: `${require.main.id}/logs/http-%DATE%.log`,
-  datePattern: 'YYYY-MM-DD-HH',
-  zippedArchive: true,
-  maxSize: '20m',
-  maxFiles: '14d',
-  format: format.combine(
-    format.label({ label: 'HTTP' }),
-    format.timestamp(),
-    format.simple(),
-    fileLogFormat
-  ),
-};
+  debug(message: string, ...meta: any[]) {
+    this.logger.debug(message, ...meta);
+  }
 
-export const HttpModuleLogger = new winston.createLogger({
-  level: 'error',
-  transports: [
-    new DailyRotateFile(httpModuleFileTransport),
-    new winston.transports.Console(httpModuleOptions.console)
-  ],
-  exitOnError: false
-});
+  warn(message: string, ...meta: any[]) {
+    this.logger.warn(message, ...meta);
+  }
 
+  error(message: string, ...meta: any[]) {
+    this.logger.error(message, ...meta);
+  }
+}
 
-export default logger;
+export default LoggerService;

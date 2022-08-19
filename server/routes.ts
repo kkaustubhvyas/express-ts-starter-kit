@@ -1,6 +1,10 @@
-import { Application } from 'express';
+import { Application, NextFunction, Request, Response } from 'express';
 import apiRoutes from './api/api.routes';
-import logger from './common/utilities/logger/logger';
-export default function routes(app: Application): void {
+
+export default function setupRoutes(app: Application): void {
   app.use('/api', apiRoutes);
-};
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    res.contentType('application/json');
+    next();
+  });
+}

@@ -1,65 +1,64 @@
 import { Request, Response, NextFunction } from 'express';
-import { HttpException } from '../utilities/exceptions/http-exceptipn';
+import _ from 'lodash';
+import { HttpException } from '../utilities/exceptions/http-exception';
 import { HttpStatus } from '../utilities/http-service';
-import * as _ from 'lodash';
-import { ForbiddenException } from '../utilities/exceptions/forbidden.exceptin';
+import { ForbiddenException } from '../utilities/exceptions/forbidden.exception';
 import { RESOURCES, ROLES, AuthorizationMap } from '../utilities/constants';
 
+function validateRoles(group: { resource: any; userRoles: any }, allowedRoles?: ROLES[]): boolean {
+  const groupName = group.resource;
+  const roles = group.userRoles;
+  const authRule = allowedRoles || AuthorizationMap[groupName] || [ROLES.ALL];
+  if (!authRule) {
+    return false;
+  }
+  if (allowedRoles?.includes?.(ROLES.ALL)) {
+    return true;
+  }
+  const commonRoles = _.intersection(authRule, roles);
+  if (commonRoles.length === 0) {
+    return false;
+  } else {
+    return true;
+  }
+}
+
 function useRoleGuard(resources: RESOURCES[], roles: ROLES[]) {
-  return function (request: Request, response: Response, next: NextFunction) {
+  return (request: Request, response: Response, next: NextFunction) => {
     if (!resources || resources.length === 0 || resources.includes(RESOURCES.ALL)) {
-      return next()
+      return next();
     }
-    const context = request.context;
-    if (!context) {
+    const { user } = request;
+    if (!user) {
       throw new HttpException({
-        message: 'User context not found',
-        status: HttpStatus.INTERNAL_SERVER_ERROR
-      })
+        message: 'User user not found',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
     }
-    const { userRoles = [] } = context
-    const userResources = (userRoles || []).map(res => res.resource)
-    const commonResources = _.intersection(userResources, resources)
+    const { userRoles = [] } = user;
+    const userResources = (userRoles || []).map((res: any) => res.resource);
+    const commonResources = _.intersection(userResources, resources);
     if (commonResources.length === 0) {
-      throw new ForbiddenException()
+      throw new ForbiddenException();
     } else {
       let i = 0;
-      let isAuthorized = false
+      let isAuthorized = false;
       while (i < commonResources.length) {
-        const groupedRole = _.find(userRoles, { resource: commonResources[i] })
-        isAuthorized = validateRoles(groupedRole, roles)
+        const groupedRole = _.find(userRoles, { resource: commonResources[i] });
+        isAuthorized = validateRoles(groupedRole, roles);
         if (!isAuthorized) {
-          throw new ForbiddenException()
+          throw new ForbiddenException();
         } else {
           i++;
         }
       }
       if (!isAuthorized) {
-        throw new ForbiddenException()
+        throw new ForbiddenException();
       } else {
-        next()
+        return next();
       }
     }
-  }
+  };
 }
-
-function validateRoles(group, allowedRoles?: ROLES[]): boolean {
-  const groupName = group.resource;
-  const roles = group.userRoles
-  const authRule = allowedRoles || AuthorizationMap[groupName]
-  if (!authRule) {
-    return false
-  }
-  if (allowedRoles.includes(ROLES.ALL)) {
-    return true
-  }
-  const commonRoles = _.intersection(authRule, roles)
-  if (commonRoles.length === 0) {
-    return false
-  } else {
-    return true
-  }
-}
-
 
 export { useRoleGuard };

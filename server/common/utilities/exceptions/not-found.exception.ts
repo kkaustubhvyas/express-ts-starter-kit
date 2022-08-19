@@ -1,12 +1,15 @@
-import { HttpException } from './http-exceptipn';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { HttpException } from './http-exception';
 import { HttpStatus } from '../http-service/http-service.constants';
+
 export class NotFoundException extends HttpException {
-  constructor(message: string) {
+  name = 'Not Found';
+
+  constructor(message?: string, details?: any) {
     super({
       status: HttpStatus.NOT_FOUND,
-      message: message
-    })
-
-    this.name = 'Not Found';
+      message: message || 'Not Found',
+      details,
+    });
   }
 }

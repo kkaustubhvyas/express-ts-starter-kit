@@ -2,14 +2,14 @@
 import { HttpException } from './http-exception';
 import { HttpStatus } from '../http-service/http-service.constants';
 
-export class BadRequestException extends HttpException {
+export class ForbiddenException extends HttpException {
   constructor(message?: string, details?: any) {
     super({
-      status: HttpStatus.BAD_REQUEST,
-      message: message || 'Bad Request',
+      status: HttpStatus.FORBIDDEN,
+      message: message || 'Forbidden',
       details,
     });
 
-    this.name = 'Bad Request';
+    this.name = 'Forbidden';
   }
 }

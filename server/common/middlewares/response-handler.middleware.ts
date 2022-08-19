@@ -1,8 +1,9 @@
 import { NextFunction, Response, Request } from 'express';
 import { HttpStatus } from '../utilities/http-service';
-import logger from '../utilities/logger/logger';
+import LoggerService from '../utilities/logger/logger';
 
 export type ResponseBody = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   data: any;
   status: HttpStatus;
   message?: string;
@@ -11,23 +12,23 @@ export type ResponseBody = {
     pageSize: string;
     totalRecords?: string;
     totalPages?: string;
-  }
-}
+  };
+};
 
-export type Controller = (req: Request, res: Response, next: NextFunction) => Promise<ResponseBody>
+export type Controller = (req: Request, res: Response, next: NextFunction) => Promise<ResponseBody>;
 
 export const controllerWrapper = (controller: Controller) => {
   return async (req: Request, res: Response, next: NextFunction) => {
     let response: ResponseBody;
-    let log: string = `URL: ${req.originalUrl} | `
+    let log = `URL: ${req.originalUrl} | `;
     try {
-      res.header('auth_token', req.headers.auth_token)
-      response = await controller(req, res, next)
+      response = await controller(req, res, next);
+      res.contentType('application/json');
       res.status(response.status).json(response);
       log += `STATUS: ${response.status} | MSG: ${response.message}`;
-      logger.info(`${log}\n`);
+      new LoggerService('Req<-->Res').info(`${log}\n`);
     } catch (e) {
-      next(e)
+      next(e);
     }
-  }
-}
+  };
+};

@@ -1,2 +1,2 @@
-export * from "./http-service.utility";
-export * from "./http-service.constants";
+export * from './http-service.utility';
+export * from './http-service.constants';
