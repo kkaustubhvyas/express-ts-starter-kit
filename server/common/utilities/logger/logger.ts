@@ -39,7 +39,7 @@ class LoggerService {
     this.logger.log(level, message, ...meta);
   }
 
-  info(message: string, ...meta: any[]) {
+  info(message: any, ...meta: any[]) {
     this.logger.info(message, ...meta);
   }
 
