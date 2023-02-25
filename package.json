@@ -48,7 +48,7 @@
     "moment": "^2.29.4",
     "pino": "^8.4.1",
     "prettier": "^2.7.1",
-    "sequelize": "^6.21.4",
+    "sequelize": "^6.29.0",
     "sequelize-cli": "^6.4.1",
     "shelljs": "^0.8.5",
     "supertest": "^6.2.4",
